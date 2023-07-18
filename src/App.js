@@ -1,10 +1,11 @@
-import { useCallback, useRef, useState } from 'react';
 import './App.css';
 import TodoInsert from './components/TodoInsert';
 import TodoList from './components/TodoList';
 import TodoTemplate from './components/TodoTemplate';
+import useModel from './components/useModel';
 
 const createBulkTodos = () => {
+  console.log('더미데이터 생성!!');
   const array = [];
   for (let i = 1; i <= 500; i++) {
     array.push({
@@ -17,40 +18,7 @@ const createBulkTodos = () => {
 };
 
 function App() {
-  const [todos, setTodos] = useState(createBulkTodos());
-  const nextId = useRef(todos.length + 1);
-
-  const onInsert = useCallback((value) => {
-    setTodos((todos) =>
-      todos.concat({
-        id: nextId.current++,
-        title: value,
-        checked: false,
-      }),
-    );
-  }, []);
-
-  const onRemove = useCallback(
-    (todo) => (todos) => setTodos(todos.filter((item) => item.id !== todo.id)),
-    [],
-  );
-
-  const checkToggle = useCallback((todo) => {
-    setTodos((todos) =>
-      todos.map((item) =>
-        item.id === todo.id ? { ...item, checked: !item.checked } : item,
-      ),
-    );
-
-    //옛날 방식 for 문
-    // for (let i = 0; i < todos.length; i++) {
-    //   if (todos[i].id === id) {
-    //     let newTodos = todos;
-    //     newTodos[i].checked = !todos[i].checked;
-    //     setTodos([...newTodos]);
-    //   }
-    // }
-  }, []);
+  const [todos, onInsert, onRemove, checkToggle] = useModel(createBulkTodos());
 
   return (
     <TodoTemplate>
