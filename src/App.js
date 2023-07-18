@@ -5,9 +5,8 @@ import TodoTemplate from './components/TodoTemplate';
 import useModel from './components/useModel';
 
 const createBulkTodos = () => {
-  console.log('더미데이터 생성!!');
   const array = [];
-  for (let i = 1; i <= 500; i++) {
+  for (let i = 1; i <= 10000; i++) {
     array.push({
       id: i,
       checked: i % 3 === 0,
