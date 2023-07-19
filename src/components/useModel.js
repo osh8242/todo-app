@@ -1,45 +1,70 @@
 import { useCallback, useReducer, useRef } from 'react';
 
+const createBulkTodos = () => {
+  const array = [];
+  for (let i = 1; i <= 100000; i++) {
+    array.push({
+      id: i,
+      checked: i % 3 === 0,
+      title: `리액트의 기초 알아보기 할일 ${i}`,
+    });
+  }
+  return array;
+};
+
 const reducer = (todos, action) => {
   switch (action.type) {
     case 'insert':
       return todos.concat(action.todo);
     case 'remove':
-      return action.todos;
+      return todos.filter((item) => item.id !== action.id);
     case 'check':
-      return action.todos;
+      // return todos.map((item) =>
+      //   item.id === action.id ? { ...item, checked: !item.checked } : item,
+      // );
+      // 이진탐색
+      console.time('check');
+      let left = 0;
+      let right = todos.length - 1;
+      let targetIndex = -1;
+      while (left <= right) {
+        let index = Math.floor((left + right) / 2);
+        if (todos[index].id === action.id) {
+          targetIndex = index;
+          break;
+        } else if (todos[index].id > action.id) {
+          right = index - 1;
+        } else left = index + 1;
+      }
+      todos[targetIndex].checked = !todos[targetIndex].checked;
+      console.timeEnd('check');
+      return [...todos];
     default:
       return todos;
   }
 };
 
-const useModel = (initData) => {
-  const [todos, dispatch] = useReducer(reducer, initData);
+const useModel = () => {
+  const [todos, dispatch] = useReducer(reducer, createBulkTodos());
   const nextId = useRef(todos.length + 1);
 
-  const onInsert = useCallback(
-    (value) => {
-      const todo = {
-        id: nextId.current++,
-        title: value,
-        checked: false,
-      };
-      dispatch({ type: 'insert', todo: todo });
-    },
-    [nextId],
+  const onInsert = useCallback((value) => {
+    const todo = {
+      id: nextId.current++,
+      title: value,
+      checked: false,
+    };
+    dispatch({ type: 'insert', todo: todo });
+  }, []);
+
+  const onRemove = useCallback((id) => {
+    dispatch({ type: 'remove', id: id });
+  }, []);
+
+  const checkToggle = useCallback(
+    (id) => dispatch({ type: 'check', id: id }),
+    [],
   );
-
-  const onRemove = useCallback((todo) => {
-    const newTodos = todos.filter((item) => item.id !== todo.id);
-    dispatch({ type: 'remove', todos: newTodos });
-  }, []);
-
-  const checkToggle = useCallback((todo) => {
-    const newTodos = todos.map((item) =>
-      item.id === todo.id ? { ...item, checked: !item.checked } : item,
-    );
-    dispatch({ type: 'check', todos: newTodos });
-  }, []);
 
   return [todos, onInsert, onRemove, checkToggle];
 };

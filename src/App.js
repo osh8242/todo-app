@@ -4,20 +4,8 @@ import TodoList from './components/TodoList';
 import TodoTemplate from './components/TodoTemplate';
 import useModel from './components/useModel';
 
-const createBulkTodos = () => {
-  const array = [];
-  for (let i = 1; i <= 10000; i++) {
-    array.push({
-      id: i,
-      checked: i % 3 === 0,
-      title: `리액트의 기초 알아보기 할일 ${i}`,
-    });
-  }
-  return array;
-};
-
 function App() {
-  const [todos, onInsert, onRemove, checkToggle] = useModel(createBulkTodos());
+  const [todos, onInsert, onRemove, checkToggle] = useModel();
 
   return (
     <TodoTemplate>
