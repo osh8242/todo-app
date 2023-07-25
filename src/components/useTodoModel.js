@@ -2,7 +2,7 @@ import { useCallback, useReducer, useRef } from 'react';
 
 const createBulkTodos = () => {
   const array = [];
-  for (let i = 1; i <= 100; i++) {
+  for (let i = 1; i <= 100000; i++) {
     array.push({
       id: i,
       checked: i % 3 === 0,
@@ -17,31 +17,48 @@ const reducer = (todos, action) => {
     case 'insert':
       return todos.concat(action.todo);
     case 'remove':
-      return todos.filter((item) => item.id !== action.id);
+      //필터 사용
+      //return todos.filter((item) => item.id !== action.id);
+
+      //이진탐색 사용
+      console.time('check');
+      const removeIndex = binarySearch(todos, action.id);
+      todos.splice(removeIndex, 1);
+      console.timeEnd('check');
+      return [...todos];
+
     case 'check':
+      //맵 사용
       // return todos.map((item) =>
       //   item.id === action.id ? { ...item, checked: !item.checked } : item,
       // );
-      // 이진탐색
+
+      // 이진탐색 사용
       console.time('check');
-      let left = 0;
-      let right = todos.length - 1;
-      let targetIndex = -1;
-      while (left <= right) {
-        let index = Math.floor((left + right) / 2);
-        if (todos[index].id === action.id) {
-          targetIndex = index;
-          break;
-        } else if (todos[index].id > action.id) {
-          right = index - 1;
-        } else left = index + 1;
-      }
-      todos[targetIndex].checked = !todos[targetIndex].checked;
+      const checkIndex = binarySearch(todos, action.id);
+      todos[checkIndex].checked = !todos[checkIndex].checked;
       console.timeEnd('check');
       return [...todos];
     default:
       return todos;
   }
+};
+
+//이진탐색 함수
+const binarySearch = (todos, id) => {
+  let left = 0;
+  let right = todos.length - 1;
+  let index = -1;
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    if (todos[mid].id === id) {
+      index = mid;
+      break;
+    } else if (todos[mid].id > id) {
+      right = mid - 1;
+    } else left = mid + 1;
+  }
+  return index;
 };
 
 const useTodoModel = () => {
