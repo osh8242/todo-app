@@ -1,34 +1,25 @@
+import { useContext } from 'react';
 import { List } from 'react-virtualized';
+import TodoContext from './TodoContext';
 import './TodoList.scss';
 import TodoListItem from './TodoListItem';
 
-const TodoList = ({ todos, list, onRemove, checkToggle }) => {
+const TodoList = () => {
+  const { todos, actions } = useContext(TodoContext);
   const rowRenderer = ({ index, key, style }) => {
     const todo = todos[index];
-    console.log('rowRenderer 호출! index : ' + index);
+    //console.log('rowRenderer 호출! index : ' + index);
     return (
       <TodoListItem
         todo={todo}
         key={key}
-        onRemove={onRemove}
-        checkToggle={checkToggle}
+        onRemove={() => actions.onRemove(todo.id)}
+        checkToggle={() => actions.checkToggle(todo.id)}
         style={style}
       ></TodoListItem>
     );
   };
   return (
-    // <div className="TodoList">
-    //   {todos.map((todo) => {
-    //     return (
-    //       <TodoListItem
-    //         todo={todo}
-    //         key={todo.id}
-    //         onRemove={onRemove}
-    //         checkToggle={checkToggle}
-    //       ></TodoListItem>
-    //     );
-    //   })}
-    // </div>
     <List
       className="TodoList"
       width={512}

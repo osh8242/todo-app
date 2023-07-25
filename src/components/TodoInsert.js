@@ -1,22 +1,25 @@
-import { useCallback, useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { MdAdd } from 'react-icons/md';
+import TodoContext from './TodoContext';
 import './TodoInsert.scss';
 
-const TodoInsert = ({ onInsert }) => {
+const TodoInsert = () => {
   const [value, setValue] = useState('');
   const inputBox = useRef();
 
-  const onChange = useCallback((e) => {
-    setValue(e.target.value);
-  });
+  const { actions } = useContext(TodoContext);
 
-  const onSubmit = useCallback((e) => {
+  const onChange = (e) => {
+    setValue(e.target.value);
+  };
+
+  const onSubmit = (e) => {
     e.preventDefault();
     inputBox.current.focus();
-    onInsert(value);
+    actions.onInsert(value);
     setValue('');
     return false;
-  });
+  };
 
   return (
     <div>
