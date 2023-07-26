@@ -1,12 +1,12 @@
 import cn from 'classnames';
+import { useContext } from 'react';
 import {
   MdCheckBox,
   MdCheckBoxOutlineBlank,
   MdRemoveCircleOutline,
 } from 'react-icons/md';
-import './TodoListItem.scss';
-import { useContext } from 'react';
 import TodoContext from './TodoContext';
+import './TodoListItem.scss';
 
 const TodoListItem = ({ todo, style }) => {
   const { title, checked } = todo;
@@ -17,7 +17,7 @@ const TodoListItem = ({ todo, style }) => {
       <div className="TodoListItem">
         <div className={cn('checkbox', { checked })}>
           {checked ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
-          <div className="text" onClick={(e) => actions.checkToggle(todo.id)}>
+          <div className="text" onClick={(e) => actions.checkToggle(todo)}>
             {title}
           </div>
         </div>
