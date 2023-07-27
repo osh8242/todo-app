@@ -17,27 +17,29 @@ const reducer = (todos, action) => {
     case 'insert':
       return todos.concat(action.todo);
     case 'remove':
+      console.time('timeRemove');
+
       //필터 사용
       //return todos.filter((item) => item.id !== action.id);
 
       //이진탐색 사용
-      console.time('check');
       const removeIndex = binarySearch(todos, action.id);
       todos.splice(removeIndex, 1);
-      console.timeEnd('check');
+      console.timeEnd('timeRemove');
       return [...todos];
 
     case 'check':
+      console.time('timeCheck');
+
       //맵 사용
       // return todos.map((item) =>
       //   item.id === action.id ? { ...item, checked: !item.checked } : item,
       // );
 
       // 이진탐색 사용
-      console.time('check');
       const checkIndex = binarySearch(todos, action.id);
       todos[checkIndex].checked = !todos[checkIndex].checked;
-      console.timeEnd('check');
+      console.timeEnd('timeCheck');
       return [...todos];
     default:
       return todos;
