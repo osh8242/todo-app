@@ -69,7 +69,7 @@ const binarySearch = (todos, id) => {
 const useTodoModel = () => {
   const [todos, dispatch] = useReducer(reducer, []);
   //const nextId = useRef(todos.length + 1);
-  const url = 'http://localhost:8070';
+  const url = 'http://localhost:8090/todo';
 
   useEffect(() => {
     axios.get(url + '/todoList').then((response) => {
@@ -91,6 +91,7 @@ const useTodoModel = () => {
       delete_yn: 'N',
     };
     axios.post(url + '/todoInsert', todo).then((response) => {
+      console.log(response);
       const id = response.data;
       if (id > 0)
         dispatch({ type: 'insert', todo: { ...todo, id: id, checked: false } });

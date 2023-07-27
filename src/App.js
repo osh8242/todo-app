@@ -1,4 +1,4 @@
-import './App.css';
+import Login from './components/Login';
 import { TodoProvider } from './components/TodoContext';
 import TodoInsert from './components/TodoInsert';
 import TodoList from './components/TodoList';
@@ -11,6 +11,7 @@ function App() {
         <TodoInsert />
         <TodoList />
       </TodoTemplate>
+      <Login />
     </TodoProvider>
   );
 }
