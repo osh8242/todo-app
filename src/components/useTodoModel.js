@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import axios from '../../node_modules/axios/index';
 
 // const createBulkTodos = () => {
@@ -68,56 +68,79 @@ const binarySearch = (todos, id) => {
 
 const useTodoModel = () => {
   const [todos, dispatch] = useReducer(reducer, []);
+  const [loggedUsername, setLoggedUsername] = useState('');
+  const [token, setToken] = useState('null');
   //const nextId = useRef(todos.length + 1);
   const url = 'http://localhost:8090/todo';
 
   useEffect(() => {
-    axios.get(url + '/todoList').then((response) => {
-      let todos = response.data;
-      todos = todos.map((item) =>
-        item.checked === 'N'
-          ? { ...item, checked: false }
-          : { ...item, checked: true },
-      );
-      dispatch({ type: 'load', todos: todos });
-    });
-  }, []);
+    if (loggedUsername === '') return;
+    axios
+      .get(url + '/todoList', { headers: { Authorization: token } })
+      .then((response) => {
+        let todos = response.data;
+        todos = todos.map((item) =>
+          item.checked === 'N'
+            ? { ...item, checked: false }
+            : { ...item, checked: true },
+        );
+        dispatch({ type: 'load', todos: todos });
+      });
+  }, [token]);
 
-  const onInsert = useCallback((value) => {
+  const onInsert = useCallback((data) => {
     const todo = {
       //id: nextId.current++,
-      title: value,
+      title: data.title,
       checked: 'N',
       delete_yn: 'N',
+      username: data.username,
     };
-    axios.post(url + '/todoInsert', todo).then((response) => {
-      console.log(response);
-      const id = response.data;
-      if (id > 0)
-        dispatch({ type: 'insert', todo: { ...todo, id: id, checked: false } });
-      else console.log('삽입 실패');
-    });
+    axios
+      .post(url + '/todoInsert', todo, { headers: { Authorization: token } })
+      .then((response) => {
+        console.log(response);
+        const id = response.data;
+        if (id > 0)
+          dispatch({
+            type: 'insert',
+            todo: { ...todo, id: id, checked: false },
+          });
+        else console.log('삽입 실패');
+      });
   }, []);
 
   const onRemove = useCallback((id) => {
     console.log('id', id, '삭제요청');
-    axios.delete(url + '/todoDelete', { data: { id: id } }).then((response) => {
-      const result = response.data;
-      console.log('삭제됨', result);
-      if (result > 0) dispatch({ type: 'remove', id: id });
-      else console.log('삭제 실패');
-    });
+    axios
+      .delete(url + '/todoDelete', {
+        headers: { Authorization: token },
+        data: { id: id },
+      })
+      .then((response) => {
+        const result = response.data;
+        console.log('삭제됨', result);
+        if (result > 0) dispatch({ type: 'remove', id: id });
+        else console.log('삭제 실패');
+      });
   }, []);
 
   const checkToggle = useCallback((todo) => {
     todo = todo.checked ? { ...todo, checked: 'N' } : { ...todo, checked: 'Y' };
-    axios.put(url + '/todoUpdate', todo).then((response) => {
-      const result = response.data;
-      if (result > 0) dispatch({ type: 'check', id: todo.id });
-    });
+    axios
+      .put(url + '/todoUpdate', todo, { headers: { Authorization: token } })
+      .then((response) => {
+        const result = response.data;
+        if (result > 0) dispatch({ type: 'check', id: todo.id });
+      });
   }, []);
 
-  return { todos: todos, actions: { onInsert, onRemove, checkToggle } };
+  return {
+    todos: todos,
+    loggedUsername: loggedUsername,
+    token: token,
+    actions: { onInsert, onRemove, checkToggle, setLoggedUsername, setToken },
+  };
 };
 
 export default useTodoModel;

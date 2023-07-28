@@ -16,7 +16,7 @@ const TodoInsert = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     inputBox.current.focus();
-    actions.onInsert(value);
+    actions.onInsert({ title: value, username: {} });
     setValue('');
     return false;
   };

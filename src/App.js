@@ -1,17 +1,17 @@
+import { Route, Routes } from '../node_modules/react-router-dom/dist/index';
+import Join from './components/Join';
 import Login from './components/Login';
+import TodoApp from './components/TodoApp';
 import { TodoProvider } from './components/TodoContext';
-import TodoInsert from './components/TodoInsert';
-import TodoList from './components/TodoList';
-import TodoTemplate from './components/TodoTemplate';
 
 function App() {
   return (
     <TodoProvider>
-      <TodoTemplate>
-        <TodoInsert />
-        <TodoList />
-      </TodoTemplate>
-      <Login />
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/join" element={<Join />} />
+        <Route path="/todo/:username" element={<TodoApp />} />
+      </Routes>
     </TodoProvider>
   );
 }

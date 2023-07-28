@@ -1,13 +1,9 @@
-import React, { useReducer } from 'react';
+import { useReducer } from 'react';
 
 const reducer = (state, action) => {};
 
 const useUserModel = () => {
-  const [state, dispatch] = useReducer(reducer, {
-    id: '',
-    username: '',
-    password: '',
-  });
+  const [loggedUsername, dispatch] = useReducer(reducer, '');
 
   return <div></div>;
 };
